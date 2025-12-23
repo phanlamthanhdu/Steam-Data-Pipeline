@@ -1,0 +1,8 @@
+aws:
+  region: us-east-1
+
+s3:
+  bucket: steam-datalake
+  raw_prefix: raw
+  processed_prefix: processed
+  analytics_prefix: analytics
