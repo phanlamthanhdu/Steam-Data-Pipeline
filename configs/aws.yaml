@@ -2,7 +2,15 @@ aws:
   region: us-east-1
 
 s3:
-  bucket: steam-datalake
+  bucket: steam-datalake-duplt
+
   raw_prefix: raw
+  tag_endpoint: tags
+  tag_filename: tags.json
+  app_endpoint: apps
+  app_filename: apps.json
+  app_info_endpoint: app_info
+  app_info_filename: app_info.json
+
   processed_prefix: processed
   analytics_prefix: analytics
