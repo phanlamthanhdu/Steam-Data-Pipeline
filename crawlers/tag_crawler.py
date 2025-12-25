@@ -11,7 +11,6 @@ s3_configs = yaml.safe_load(open(file = "configs/aws.yaml", mode = "r").read())
 tag_dir = {
     "bucket": s3_configs['s3']['bucket'],
     "endpoint": f"{s3_configs['s3']['raw_prefix']}/{s3_configs['s3']['tag_endpoint']}",
-    "file_name": s3_configs['s3']['tag_filename']
 }
 
 url = "https://store.steampowered.com/actions/ajaxgetstoretags"
@@ -25,7 +24,7 @@ tags = response.json()['tags']
 
 s3.put_object(
     Bucket=tag_dir['bucket'],
-    Key=f"{tag_dir['endpoint']}/{tag_dir['file_name']}",
+    Key=f"{tag_dir['endpoint']}/tags.json",
     Body=json.dumps(tags, ensure_ascii=False),
     ContentType="application/json"
 )
