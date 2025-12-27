@@ -5,9 +5,10 @@ s3:
   bucket: steam-datalake-duplt
 
   raw_prefix: raw
-  tag_endpoint: tags
-  app_endpoint: apps
-  app_info_endpoint: app_info
-
   processed_prefix: processed
   analytics_prefix: analytics
+
+  tag_endpoint: tags
+  app_endpoint: apps
+  content_endpoint: contents
+
