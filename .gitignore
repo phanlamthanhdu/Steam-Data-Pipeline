@@ -1,0 +1,3 @@
+databucket/*
+*.txt
+!requirements.txt

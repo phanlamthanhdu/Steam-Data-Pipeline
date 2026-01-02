@@ -21,7 +21,7 @@ tag_dir = {
 }
 app_dir = {
     "bucket": s3_configs['s3']['bucket'],
-    "endpoint": f"{s3_configs['s3']['raw_prefix']}/{s3_configs['s3']['app_endpoint']}"
+    "endpoint": f"{s3_configs['s3']['raw_prefix']}/{s3_configs['s3']['appid_endpoint']}"
 }
 
 # Fetch tags from S3

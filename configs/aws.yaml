@@ -9,6 +9,6 @@ s3:
   analytics_prefix: analytics
 
   tag_endpoint: tags
-  app_endpoint: apps
+  appid_endpoint: apps
   content_endpoint: contents
 
