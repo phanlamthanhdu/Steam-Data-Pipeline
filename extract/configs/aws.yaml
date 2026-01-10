@@ -6,9 +6,9 @@ s3:
 
   raw_prefix: raw
   processed_prefix: processed
-  analytics_prefix: analytics
 
   tag_endpoint: tags
-  appid_endpoint: apps
+  appid_endpoint: appids
   content_endpoint: contents
+  review_endpoint: reviews
 

@@ -1,3 +1,7 @@
 databucket/*
 *.txt
 !requirements.txt
+spark/*
+unused/*
+.vscode/
+**/*venv*/

@@ -209,9 +209,6 @@ def get_content_by_appid(appid: str):
 
     try: # Attempt to fetch content from the website
         
-        # Initialize session
-        s = requests.Session()
-        
         # Randomly select a proxy and user-agent
         proxy = random.choice(HTTPS_PROXIES)
         
@@ -241,29 +238,47 @@ def get_content_by_appid(appid: str):
         content_json = html_content_processing(html_content, appid)
         
         if content_json == {}:
-            return ("Done", appid)
+            return ("Failed", appid)
         
-        # Save the content to .txt file
-        fileName = "app_content.txt"
-        with open(fileName, "a", encoding='utf-8') as f:
-            f.write(f"{str(content_json)}\n")
-        
-        # # Save the JSON content to local databucket
-        # with open(f"databucket/{appid}.json", "w", encoding='utf-8') as f:
-        #     json.dump(content_json, f, indent=4)
-
-        return ("Done", appid)
+        return ("Done", appid, json.dump(content_json))
     except Exception as e: # Handle any exceptions during the request or storage
         # Print error and line of failure
         print(f"Failed to fetch content for AppID {appid}: {e} at line {e.__traceback__.tb_lineno}")
         return ("Failed", appid)
 
+# Done ID List
+doneIdList = []
+
+# Save the content to .txt file
+fileName = "app_content.txt"
+
 # Fetch content for all uncrawled appIDs using multiprocessing
-with Pool(processes=WORKERS) as pool:
-    ids = list(
-        tqdm(
+with Pool(processes=WORKERS) as pool, open(fileName, "a", encoding="utf-8") as saveFile:
+    for result in tqdm(
             desc=f"Fetching content (Done: {len(crawled_idList)}/{ID_num})",
             iterable=pool.imap_unordered(get_content_by_appid, idList),
             total=len(idList)
-        )
-    )
+    ):
+        if result[0] == "Done":
+            doneIdList.append(result[1])
+            saveFile.write(result[2] + "\n")
+
+# Save done id list to a .txt file
+fileName = "done_appids.txt"
+with open(fileName, "w", encoding="utf-8") as f:
+    for appid in doneIdList:
+        f.write(appid + "\n")
+        
+# Upload content file to S3
+s3.upload_file(
+    Filename="app_content.txt",
+    Bucket=content_dir['bucket'],
+    Key=content_dir['endpoint']
+)
+
+# Upload id file to S3
+s3.upload_file(
+    Filename="done_appids.txt",
+    Bucket=processed_app_dir['bucket'],
+    Key=f"{processed_app_dir['endpoint']}/done_appids.txt"
+)

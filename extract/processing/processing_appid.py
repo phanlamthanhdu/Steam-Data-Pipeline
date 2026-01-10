@@ -28,7 +28,7 @@ appList = s3.list_objects_v2(
 )['Contents']
 
 
-idList = {}
+idList = set({})
 for tagDir in tqdm(desc="Processing tag list", iterable=appList):
     # Extract tag and corresponding file directory
     fileDir = tagDir['Key']
@@ -43,8 +43,15 @@ for tagDir in tqdm(desc="Processing tag list", iterable=appList):
     idList.update([str(id) for id in app_data])
     
 print(f"Total appIDs: {len(idList)}")
-s3.put_object(
+
+fileName = "appids.txt"
+with open(fileName, "w", encoding="utf-8") as f:
+    for appid in idList:
+        f.write(appid + "\n")
+        
+# Upload .txt file to S3
+s3.upload_file(
+    Filename="appids.txt",
     Bucket=processed_app_dir['bucket'],
-    Key=f"{processed_app_dir['endpoint']}/all_appids.json",
-    Body=json.dumps(idList).encode('utf-8')
+    Key=f"{processed_app_dir['endpoint']}/appids.txt"
 )
