@@ -6,7 +6,9 @@
 
 ## Tools & Technologies
 * Cloud: Amazon Web Services
-* 
+*  
+*
+*
 
 
 ## Architecture
