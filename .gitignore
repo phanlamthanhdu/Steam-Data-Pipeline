@@ -1,6 +1,5 @@
 databucket/*
 *.txt
 !requirements.txt
-spark/*
 unused/*
 **/*venv*/
