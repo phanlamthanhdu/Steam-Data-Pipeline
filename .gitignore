@@ -3,5 +3,4 @@ databucket/*
 !requirements.txt
 spark/*
 unused/*
-.vscode/
 **/*venv*/
