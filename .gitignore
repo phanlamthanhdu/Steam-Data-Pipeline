@@ -3,3 +3,4 @@ databucket/*
 !requirements.txt
 unused/*
 **/*venv*/
+aws.env
