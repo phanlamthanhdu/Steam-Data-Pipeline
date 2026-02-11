@@ -1,34 +1,33 @@
-FROM python:3.12
+FROM eclipse-temurin:17-jdk-jammy
 
-# ===== System deps =====
-RUN apt-get update && \
-    apt-get install -y curl ca-certificates gnupg && \
-    apt-get install -y procps && \
-    rm -rf /var/lib/apt/lists/*
+# ===== System =====
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    curl \
+    ca-certificates \
+    procps \
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
 
-# ===== Add Temurin APT repo =====
-RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public \
-    | gpg --dearmor -o /etc/apt/keyrings/adoptium.gpg
+# ===== Spark =====
+ENV SPARK_VERSION=3.5.0
+ENV HADOOP_VERSION=3
+ENV SPARK_HOME=/opt/spark
 
-RUN echo "deb [signed-by=/etc/apt/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb bookworm main" \
-    > /etc/apt/sources.list.d/adoptium.list
+RUN curl -fSL https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
+    | tar -xz -C /opt/ && \
+    mv /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} ${SPARK_HOME}
 
-# ===== Install Java 17 =====
-RUN apt-get update && \
-    apt-get install -y temurin-17-jdk && \
-    rm -rf /var/lib/apt/lists/*
+ENV PATH="${SPARK_HOME}/bin:${PATH}"
 
-# ===== ENV =====
-ENV JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
-ENV PATH="$JAVA_HOME/bin:$PATH"
+# ===== Hadoop AWS (S3) =====
+RUN curl -fSL https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar \
+      -o ${SPARK_HOME}/jars/hadoop-aws-3.3.4.jar && \
+    curl -fSL https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.517/aws-java-sdk-bundle-1.12.517.jar \
+      -o ${SPARK_HOME}/jars/aws-java-sdk-bundle-1.12.517.jar
 
-# ===== Python deps =====
+# ===== Python libs =====
+RUN pip3 install pyspark==3.5.0 pandas pyarrow boto3
+
 WORKDIR /app
-COPY spark/ spark/
-COPY configs/aws.yaml configs/
-RUN pip install --no-cache-dir -r spark/requirements.txt
-
-
-# Default command: run Spark job
-CMD ["spark-submit", "spark/scripts/spark_jobs.py"]
