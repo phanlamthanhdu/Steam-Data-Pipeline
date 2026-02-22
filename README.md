@@ -17,9 +17,4 @@ This is a data engineering project starting with data scraping from Steam. Next,
 
 ## Final Result
 
-
-## Implementation
-
-### Pre-requisites
-
-### Setup
+![Final Result Image](images/final-result.png)
