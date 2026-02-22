@@ -12,7 +12,7 @@ This is a data engineering project starting with data scraping from Steam. Next,
 
 ## Architecture
 
-![Architecture Image](images/steam-dp-architecture.png)
+![Architecture Image](images/architecture.png)
 
 
 ## Final Result
