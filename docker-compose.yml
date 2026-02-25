@@ -1,33 +1,33 @@
 version: "3.9"
 
 networks:
-  spark-network:
+  confluent:
 
 services:
   spark-master:
     build:
       context: .
       dockerfile: spark/Dockerfile
-    image: spark-instance:3.5
-    container_name: spark-master-instance
+    container_name: spark-master
     env_file:
       - aws.env
+    volumes:
+      - ./spark:/app
+      - ./ivy-cache:/home/spark/.ivy2
     command: >
       /opt/spark/bin/spark-class
       org.apache.spark.deploy.master.Master
     ports:
-      - "8083:8080" # Port for Spark UI
-      - "7077:7077" # Port for Spark clusters
-    volumes:
-      - ./spark/jobs:/app/jobs
-      - ./ivy-cache:/home/spark/.ivy2
+      - "8083:8080"
+      - "7077:7077"
     networks:
-      - spark-network
+      - confluent
     restart: unless-stopped
 
   spark-worker:
-    image: spark-instance:3.5
-    # container_name: spark-worker-instance
+    build:
+      context: .
+      dockerfile: spark/Dockerfile
     env_file:
       - aws.env
     depends_on:
@@ -45,19 +45,23 @@ services:
       - ./spark/jobs:/app/jobs
       - ./ivy-cache:/home/spark/.ivy2
     networks:
-      - spark-network
+      - confluent
     restart: unless-stopped
 
-  spark-submit:
-    image: spark-instance:3.5
-    container_name: spark-submit-instance
-    env_file:
-      - aws.env
-    depends_on:
-      - spark-master
+  postgres:
+    image: postgres:15
+    container_name: postgres-local
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: steam_dwh
+    ports:
+      - "5432:5432"
     volumes:
-      - ./spark/jobs:/app/jobs
-      - ./ivy-cache:/root/.ivy2
+      - ./dwh:/dwh
+      - postgres-data:/var/lib/postgresql/data
     networks:
-      - spark-network
-    entrypoint: ["spark-submit"]
+      - confluent
+
+volumes:
+  postgres-data: 
