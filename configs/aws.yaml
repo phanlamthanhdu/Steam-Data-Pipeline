@@ -1,0 +1,15 @@
+aws:
+  region: us-east-1
+
+s3:
+  bucket: steam-datalake-duplt
+
+  raw_prefix: raw
+  processed_prefix: processed
+  transformed_prefix: transformed
+
+  tag_endpoint: tags
+  appid_endpoint: appids
+  content_endpoint: contents
+  review_endpoint: reviews
+

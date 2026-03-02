@@ -1,0 +1,7 @@
+databucket/*
+*.txt
+!requirements.txt
+unused/*
+**/*venv*/
+aws.env
+datalake/*
